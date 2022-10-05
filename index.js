@@ -59,7 +59,9 @@ app.get('/search-marketboard', async (req, res) => {
 
     .then(async (value) => {
         const { data } = value;
-        const { listings } =data;
+        const { listings } = data;
+        // listings = value.data.listings
+        // console.log(listings);
         let listingsResults = [];
 
         listingsResults = listings.map(element => {
@@ -83,6 +85,8 @@ app.get('/search-marketboard', async (req, res) => {
         .then((value) => {
             const { data } = value;
             const { entries } = data;
+            // entries = value.data.entries
+            // console.log(entries);
             let entriesResults = [];
 
             entriesResults = entries.map(element => {
@@ -94,16 +98,16 @@ app.get('/search-marketboard', async (req, res) => {
                     entries_timestamp: element.timestamp,
                     entries_worldName: element.worldName,
                 }
-            })
-        })
+            });
+        });
     })
 
     .catch((error) => {
         result = { message: 'error: critical failure, critical miss, or fumble' }
-    })
+    });
 
     res.send(result);
-})
+});
 
 app.listen(port, () => {
     console.log(`Server started on port ${port}`)
