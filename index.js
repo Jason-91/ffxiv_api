@@ -17,7 +17,6 @@ app.get('/search-itemname', async (req, res) => {
         url: `/search?indexes=item&string=${item_name}&sort_field=LevelItem&sort_order=desc&limit=100&private_keys=${xivApiPrivateKey}`,
         baseURL: `https://xivapi.com`
     })
-
     .then((value) => {
         const { data } = value;
         const { Results } = data;
@@ -35,11 +34,9 @@ app.get('/search-itemname', async (req, res) => {
             })
         }
     })
-
     .catch((error) => {
         result = { message: 'error: something terrible has happened!...' };
     });
-
     res.send(result);
 });
 
@@ -56,14 +53,12 @@ app.get('/search-marketboard', async (req, res) => {
         url: `/api/v2/${dataCenter}/${data_ID}`,
         baseURL: `https://universalis.app`
     })
-
     .then(async (value) => {
         const { data } = value;
         const { listings } = data;
         // listings = value.data.listings
         // console.log(listings);
         let listingsResults = [];
-
         listingsResults = listings.map(element => {
             return {
                 listings_lastReviewTime: element.lastReviewTime,
@@ -81,14 +76,12 @@ app.get('/search-marketboard', async (req, res) => {
             url: `api/v2/history/${dataCenter}/${data_ID}?entriesToReturn=100`,
             baseURL: `https://universalis.app`
         })
-
         .then((value) => {
             const { data } = value;
             const { entries } = data;
             // entries = value.data.entries
             // console.log(entries);
             let entriesResults = [];
-
             entriesResults = entries.map(element => {
                 return {
                     entries_hq: element.hq,
@@ -101,7 +94,6 @@ app.get('/search-marketboard', async (req, res) => {
             });
         });
     })
-
     .catch((error) => {
         result = { message: 'error: critical failure, critical miss, or fumble' }
     });
