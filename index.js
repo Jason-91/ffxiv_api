@@ -19,11 +19,8 @@ app.get('/search-itemname', async (req, res) => {
         baseURL: `https://xivapi.com`
     })
     .then((value) => {
-        // console.log('This is the value:', value);
         const { data } = value;
         const { Results } = data;
-        // const Results = value.data.Results
-        // console.log('These are the Results:', Results);
         result = {
             message: 'success',
             data: Results.map((data) => {
@@ -42,17 +39,9 @@ app.get('/search-itemname', async (req, res) => {
     res.send(result);
 });
 
-// if not being used, remove
-const dataCenter = 'Crystal'
-// const world = 'Malboro'
-// const allWorlds = ['Crystal', 'Balmung', 'Bryhildr', 'Coeurl', 'Diabolos', 'Goblin', 'Mateus', 'Malboro', 'Zalera']
-
 app.get('/search-marketboard', async (req, res) => {
-    // console.log('Queries:', req.query)
     const dataID = req.query['data-id'];
-    // console.log(dataID);
     const dataCenter = req.query.dataCenter;
-    // console.log(dataCenter);
     let result;
     let listingsResultsData;
     let listingsResults;
@@ -65,13 +54,20 @@ app.get('/search-marketboard', async (req, res) => {
         baseURL: `https://universalis.app`
     })
     .then(async (value) => {
-        // console.log('Listings value:', value);
         const { data } = value;
-        // console.log('Listings value.data:', data);
-        const { listings, averagePriceNQ, averagePriceHQ, currentAveragePriceNQ, currentAveragePriceHQ, nqSaleVelocity, hqSaleVelocity, minPriceNQ, maxPriceNQ, minPriceHQ, maxPriceHQ } = data;
-        // listings = value.data.listings
-        // averagePriceNQ = value.data.averagePriceNQ
-        // console.log(listings);
+        const {
+            listings,
+            averagePriceNQ,
+            averagePriceHQ,
+            currentAveragePriceNQ,
+            currentAveragePriceHQ,
+            nqSaleVelocity,
+            hqSaleVelocity,
+            minPriceNQ,
+            maxPriceNQ,
+            minPriceHQ,
+            maxPriceHQ
+        } = data;
         listingsResultsData = {
             averagePriceNQ,
             averagePriceHQ,
@@ -96,19 +92,15 @@ app.get('/search-marketboard', async (req, res) => {
             };
         })
 
+        //un-nest calls
         await axios({
             method: 'get',
             url: `api/v2/history/${dataCenter}/${dataID}?entriesToReturn=100`,
             baseURL: `https://universalis.app`
         })
         .then((value) => {
-            // console.log('History value:', value);
             const { data } = value;
-            // console.log('History value.data:', data);
             const { entries, nqSaleVelocity, hqSaleVelocity } = data;
-            // entries = value.data.entries
-            // nqSaleVelocity = value.data.nqSaleVelocity
-            // console.log(entries);
             historyResultsData = {
                 nqSaleVelocity,
                 hqSaleVelocity,
@@ -128,11 +120,12 @@ app.get('/search-marketboard', async (req, res) => {
     .catch((error) => {
         result = { message: 'error: critical failure, critical miss, or fumble' }
     });
-    // indentation
-    result = {listingsResultsData,
-    listingsResults,
-    historyResultsData,
-    historyResults,}
+    result = {
+        listingsResultsData,
+        listingsResults,
+        historyResultsData,
+        historyResults,
+    }
     res.send(result);
 });
 
