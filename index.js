@@ -91,32 +91,30 @@ app.get('/search-marketboard', async (req, res) => {
                 listings_total: element.total,
             };
         })
-
-        //un-nest calls
-        await axios({
-            method: 'get',
-            url: `api/v2/history/${dataCenter}/${dataID}?entriesToReturn=100`,
-            baseURL: `https://universalis.app`
-        })
-        .then((value) => {
-            const { data } = value;
-            const { entries, nqSaleVelocity, hqSaleVelocity } = data;
-            historyResultsData = {
-                nqSaleVelocity,
-                hqSaleVelocity,
-            };
-            historyResults = entries.map(element => {
-                return {
-                    entries_hq: element.hq,
-                    entries_pricePerUnit: element.pricePerUnit,
-                    entries_quantity: element.quantity,
-                    entries_buyerName: element.buyerName,
-                    entries_timestamp: element.timestamp,
-                    entries_worldName: element.worldName,
-                }
-            });
-        });
+    await axios({
+        method: 'get',
+        url: `api/v2/history/${dataCenter}/${dataID}?entriesToReturn=100`,
+        baseURL: `https://universalis.app`
     })
+    .then((value) => {
+        const { data } = value;
+        const { entries, nqSaleVelocity, hqSaleVelocity } = data;
+        historyResultsData = {
+            nqSaleVelocity,
+            hqSaleVelocity,
+        };
+        historyResults = entries.map(element => {
+            return {
+                entries_hq: element.hq,
+                entries_pricePerUnit: element.pricePerUnit,
+                entries_quantity: element.quantity,
+                entries_buyerName: element.buyerName,
+                entries_timestamp: element.timestamp,
+                entries_worldName: element.worldName,
+            }
+        });
+    });
+})
     .catch((error) => {
         result = { message: 'error: critical failure, critical miss, or fumble' }
     });
