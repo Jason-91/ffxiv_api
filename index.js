@@ -21,6 +21,7 @@ app.get('/search-itemname', async (req, res) => {
     .then((value) => {
         const { data } = value;
         const { Results } = data;
+
         result = {
             message: 'success',
             data: Results.map((data) => {
@@ -68,6 +69,7 @@ app.get('/search-marketboard', async (req, res) => {
             minPriceHQ,
             maxPriceHQ
         } = data;
+
         listingsResultsData = {
             averagePriceNQ,
             averagePriceHQ,
@@ -80,6 +82,7 @@ app.get('/search-marketboard', async (req, res) => {
             minPriceHQ,
             maxPriceHQ,
         };
+
         listingsResults = listings.map(element => {
             return {
                 listings_lastReviewTime: element.lastReviewTime,
@@ -91,6 +94,7 @@ app.get('/search-marketboard', async (req, res) => {
                 listings_total: element.total,
             };
         })
+
     await axios({
         method: 'get',
         url: `api/v2/history/${dataCenter}/${dataID}?entriesToReturn=100`,
@@ -99,10 +103,12 @@ app.get('/search-marketboard', async (req, res) => {
     .then((value) => {
         const { data } = value;
         const { entries, nqSaleVelocity, hqSaleVelocity } = data;
+
         historyResultsData = {
             nqSaleVelocity,
             hqSaleVelocity,
         };
+
         historyResults = entries.map(element => {
             return {
                 entries_hq: element.hq,
@@ -126,6 +132,67 @@ app.get('/search-marketboard', async (req, res) => {
     }
     res.send(result);
 });
+
+app.get('/data-centers', async (req, res) => {
+    let dataCenters;
+    let result;
+    let filteredDataCenters = [];
+    let worldDict;
+
+    await axios ({
+        method: 'get',
+        url: `/api/v2/data-centers`,
+        baseURL: `https://universalis.app`
+    })
+    .then(async (value) => {
+        const { data } = value;
+
+        data.forEach((element) => {
+            if (element.region === 'North-America') {
+                filteredDataCenters.push(element)
+            }
+        })
+    })
+    .catch((error) => {
+        result = { message: 'error: failure to fetch server names' }
+    });
+
+    await axios ({
+        method: 'get',
+        url: `/api/v2/worlds`,
+        baseURL: `https://universalis.app`
+    })
+    .then(async (value) => {
+        const { data } = value;
+
+        let tempKeys = data.map(element => element.id);
+        let tempValues = data.map(element => element.name);
+
+        tempKeys.map((element, index) => {
+            return worldDict[element] = tempValues[index];
+        });
+    })
+    .catch((error) => {
+        result = { message: 'error: failure to fetch server names' }
+    });
+    result = {
+        // 
+    }
+    res.send(result);
+});
+
+// {
+//     'Aether': {
+//         'worlds': asdf, asdf, asdf,
+//     }
+//     'Crystal': {
+//         'worlds': asdf, asdf, asdf,
+//     }
+//     'Primal': {
+//         'worlds': asdf, asdf, asdf,
+//     }
+// }
+
 
 app.listen(port, () => {
     console.log(`Server started on port ${port}`)
